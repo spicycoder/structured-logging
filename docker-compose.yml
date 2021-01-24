@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.1
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+    ports:
+      - 9200:9200
+    networks: 
+      - elastic
+
+  kibana:
+    container_name: kibana
+    image: docker.elastic.co/kibana/kibana:7.10.1
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    ports:
+      - 5601:5601
+    depends_on:
+      - elasticsearch
+    networks: 
+      - elastic
+
+  apm:
+    container_name: apm
+    image: docker.elastic.co/apm/apm-server:7.10.2
+    ports:
+      - 8200:8200
+    depends_on:
+      - elasticsearch
+    networks: 
+      - elastic
+
+networks: 
+  elastic:
